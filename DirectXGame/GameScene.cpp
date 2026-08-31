@@ -19,11 +19,44 @@ constexpr int kPerfectScore = 1000;
 void GameScene::Initialize() {
 	KamataEngine::DebugText::GetInstance()->Initialize();
 
-	phase_ = Phase::Ready;
+	// テストユーザーでログイン開始
+	loginFuture_ = HttpClient::LoginAsync("testuser3", "password123");
+
+	phase_ = Phase::LoggingIn;
 }
 
 void GameScene::Update() {
 	auto* const input = KamataEngine::Input::GetInstance();
+
+	// -------------------------
+	// ログイン中
+	// -------------------------
+	if (phase_ == Phase::LoggingIn) {
+
+		if (loginFuture_.valid()) {
+
+			const auto status = loginFuture_.wait_for(std::chrono::seconds(0));
+
+			if (status == std::future_status::ready) {
+
+				token_ = loginFuture_.get();
+
+				if (!token_.empty()) {
+					// ログイン成功
+					phase_ = Phase::Ready;
+				} else {
+					// ログイン失敗
+					phase_ = Phase::LoginFailed;
+				}
+			}
+		}
+
+		return;
+	}
+
+	if (phase_ == Phase::LoginFailed) {
+		return;
+	}
 
 	// -------------------------
 	// スコア送信中
@@ -92,6 +125,8 @@ void GameScene::Update() {
 
 		break;
 
+	case Phase::LoggingIn:
+	case Phase::LoginFailed:
 	case Phase::Sending:
 	case Phase::LoadingRanking:
 
@@ -107,6 +142,22 @@ void GameScene::Draw() {
 	debugText->Print("10 SECOND STOP CHALLENGE", 380.0f, 80.0f, 2.0f);
 
 	switch (phase_) {
+
+	case Phase::LoggingIn:
+
+		debugText->Print("LOGGING IN...", 500.0f, 300.0f, 1.5f);
+
+		debugText->Print("Please wait", 535.0f, 350.0f, 1.0f);
+
+		break;
+
+	case Phase::LoginFailed:
+
+		debugText->Print("LOGIN FAILED", 500.0f, 300.0f, 1.5f);
+
+		debugText->Print("Check username / password / server", 420.0f, 350.0f, 1.0f);
+
+		break;
 
 	// -------------------------
 	// 開始待ち
@@ -243,7 +294,7 @@ void GameScene::StopGame() {
 
 	postSuccess_ = false;
 
-	postFuture_ = HttpClient::PostScoreAsync("GamePlayer", score_);
+	postFuture_ = HttpClient::PostScoreAsync(score_, token_);
 
 	phase_ = Phase::Sending;
 }

@@ -6,9 +6,9 @@
 
 class HttpClient {
 public:
-	// スコアを非同期でWeb APIへPOSTする
-	static std::future<bool> PostScoreAsync(const std::string& name, int score);
+	static std::future<std::string> LoginAsync(const std::string& name, const std::string& password);
 
-	// スコアを非同期でWeb APIからGETする
+	static std::future<bool> PostScoreAsync(int score, const std::string& token);
+
 	static std::future<std::vector<int>> GetScoresAsync();
 };

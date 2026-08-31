@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <future>
+#include <string>
 #include <vector>
 
 /// <summary>
@@ -14,13 +15,7 @@ public:
 	void Draw();
 
 private:
-	enum class Phase {
-		Ready,
-		Playing,
-		Sending,
-		LoadingRanking,
-		Ranking
-	};
+	enum class Phase { LoggingIn, LoginFailed, Ready, Playing, Sending, LoadingRanking, Ranking };
 
 	using Clock = std::chrono::steady_clock;
 
@@ -29,7 +24,7 @@ private:
 
 	float GetElapsedSeconds() const;
 
-	Phase phase_ = Phase::Ready;
+	Phase phase_ = Phase::LoggingIn;
 
 	Clock::time_point startTime_{};
 
@@ -37,6 +32,12 @@ private:
 	int score_ = 0;
 
 	std::vector<int> ranking_;
+
+	// ログイン結果（JWT）
+	std::future<std::string> loginFuture_;
+
+	// ログイン後に保持するJWT
+	std::string token_;
 
 	// 非同期POSTの結果
 	std::future<bool> postFuture_;
