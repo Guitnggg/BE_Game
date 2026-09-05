@@ -33,7 +33,8 @@ std::future<std::string> HttpClient::LoginAsync(const std::string& name, const s
 			return "";
 		}
 
-		const std::string url = "http://localhost:3000/users/login";
+		// ログイン
+		const std::string url = "https://swgame-six-eta.vercel.app/users/login";
 
 		const std::string json = "{\"name\":\"" + name + "\",\"password\":\"" + password + "\"}";
 
@@ -103,7 +104,8 @@ std::future<bool> HttpClient::PostScoreAsync(int score, const std::string& token
 			return false;
 		}
 
-		const std::string url = "http://localhost:3000/scores";
+		// スコア送信
+		const std::string url = "https://swgame-six-eta.vercel.app/scores";
 
 		// ユーザー名は送らない
 		// JWTからサーバー側でユーザーを特定する
@@ -152,7 +154,8 @@ std::future<std::vector<int>> HttpClient::GetScoresAsync() {
 			return scores;
 		}
 
-		const std::string url = "http://localhost:3000/scores";
+		// スコアランキング取得
+		const std::string url = "https://swgame-six-eta.vercel.app/scores";
 
 		std::string response;
 
