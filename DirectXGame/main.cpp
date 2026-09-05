@@ -13,6 +13,7 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 		while (!KamataEngine::Update()) {
 			gameScene.Update();
 			auto* const dxCommon = KamataEngine::DirectXCommon::GetInstance();
+
 			dxCommon->PreDraw();
 			gameScene.Draw();
 			dxCommon->PostDraw();

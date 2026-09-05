@@ -20,7 +20,7 @@ void GameScene::Initialize() {
 	KamataEngine::DebugText::GetInstance()->Initialize();
 
 	// テストユーザーでログイン開始
-	loginFuture_ = HttpClient::LoginAsync("testuser3", "password123");
+	loginFuture_ = HttpClient::LoginAsync("submituser", "password123");
 
 	phase_ = Phase::LoggingIn;
 }
